@@ -59,7 +59,7 @@ function generateAutoCorrectEntries() {
                 let existingCode = null;
                 if (existingEntry !== "None" && existingEntry !== "N/A" && existingEntry !== "N\\A") {
                     // Extract the first entry code
-                    const match = existingEntry.match(/\\[a-zA-Z0-9]+/);
+                    const match = existingEntry.match(/\/*\\[a-zA-Z0-9]+/);
                     if (match) {
                         existingCode = match[0];
                     }
@@ -74,7 +74,7 @@ function generateAutoCorrectEntries() {
                         category: categoryHeading,
                         name: code.substring(1), // Remove the leading backslash
                         symbol: symbol,
-                        existingEntry: existingCode ? `"\\${existingCode}"` : '""'
+                        existingEntry: existingCode ? `"${existingCode.replace("\\","\\\\")}"` : '""'
                     });
                 });
             }
