@@ -99,7 +99,7 @@ namespace MathAutoCorrectInstaller
                         string value = null;
 
                         // If the symbol should be derived from an existing entry
-                        if (!string.IsNullOrEmpty(entry.ExistingEntry))
+                        if (!string.IsNullOrEmpty(entry.ExistingEntry) && entry.ExistingEntry[0] != '/')
                         {
                             string existingName = entry.ExistingEntry.TrimStart('\\').TrimStart('`').TrimEnd('`');
 
@@ -107,6 +107,20 @@ namespace MathAutoCorrectInstaller
                             {
                                 value = existingEntries[existingName];
                                 Console.WriteLine($"Using value from existing entry '{existingName}' for '{entry.Name}'");
+                                if(entry.Symbol != value)
+                                {
+                                    Console.WriteLine($"MISMATCH: {existingName} and {entry.Name}");
+                                    foreach (char c in value)
+                                    {
+                                        ushort unicodeValue = c;
+                                        Console.WriteLine($"Existing Character: {c}, Unicode: U+{unicodeValue:X4}");
+                                    }
+                                    foreach (char c in entry.Symbol)
+                                    {
+                                        ushort unicodeValue = c;
+                                        Console.WriteLine($"From wiki Character: {c}, Unicode: U+{unicodeValue:X4}");
+                                    }
+                                }
                             }
                             else
                             {
@@ -270,13 +284,16 @@ namespace MathAutoCorrectInstaller
             // Create a list of all proposed entries directly
             var entries = new List<AutoCorrectEntry>
             {
+
+                // Extracted Auto-Correct Entries
+
                 // Currency Symbols
                 new AutoCorrectEntry { Name = "cents", Symbol = "¢", ExistingEntry = "" },
 
-                // Numbers - Repeating decimal
-                new AutoCorrectEntry { Name = "repeat", Symbol = "‾", ExistingEntry = "\\overbar" },
-                new AutoCorrectEntry { Name = "repeating", Symbol = "‾", ExistingEntry = "\\overbar" },
-                new AutoCorrectEntry { Name = "vinculum", Symbol = "‾", ExistingEntry = "\\overbar" },
+                // Numbers
+                new AutoCorrectEntry { Name = "repeat", Symbol = "¯", ExistingEntry = "\\overbar" },
+                new AutoCorrectEntry { Name = "repeating", Symbol = "¯", ExistingEntry = "\\overbar" },
+                new AutoCorrectEntry { Name = "vinculum", Symbol = "¯", ExistingEntry = "\\overbar" },
 
                 // Basic Symbols and Operations
                 new AutoCorrectEntry { Name = "infinity", Symbol = "∞", ExistingEntry = "\\infty" },
@@ -294,20 +311,20 @@ namespace MathAutoCorrectInstaller
                 new AutoCorrectEntry { Name = "circle", Symbol = "◯", ExistingEntry = "" },
                 new AutoCorrectEntry { Name = "circledot", Symbol = "⊙", ExistingEntry = "\\odot" },
                 new AutoCorrectEntry { Name = "line", Symbol = "⃡", ExistingEntry = "\\tvec" },
-                new AutoCorrectEntry { Name = "seg", Symbol = "‾", ExistingEntry = "\\overbar" },
+                new AutoCorrectEntry { Name = "seg", Symbol = "¯", ExistingEntry = "\\overbar" },
                 new AutoCorrectEntry { Name = "measangle", Symbol = "∡", ExistingEntry = "" },
                 new AutoCorrectEntry { Name = "rightangle", Symbol = "∟", ExistingEntry = "" },
                 new AutoCorrectEntry { Name = "triangle", Symbol = "△", ExistingEntry = "" },
                 new AutoCorrectEntry { Name = "parallelogram", Symbol = "▱", ExistingEntry = "\\underline" },
                 new AutoCorrectEntry { Name = "notparallel", Symbol = "∦", ExistingEntry = "" },
                 new AutoCorrectEntry { Name = "ray", Symbol = "⃗", ExistingEntry = "\\vec" },
-                new AutoCorrectEntry { Name = "arc", Symbol = "⌢", ExistingEntry = "\\overparen" },
+                new AutoCorrectEntry { Name = "arc", Symbol = "⏜", ExistingEntry = "\\overparen" },
 
                 // Inequalities and Relations
-                new AutoCorrectEntry { Name = "nlt", Symbol = "≮", ExistingEntry = "/<" },
-                new AutoCorrectEntry { Name = "notlt", Symbol = "≮", ExistingEntry = "/<" },
-                new AutoCorrectEntry { Name = "ngt", Symbol = "≯", ExistingEntry = "/>" },
-                new AutoCorrectEntry { Name = "notgt", Symbol = "≯", ExistingEntry = "/>" },
+                new AutoCorrectEntry { Name = "nlt", Symbol = "≮", ExistingEntry = "" },
+                new AutoCorrectEntry { Name = "notlt", Symbol = "≮", ExistingEntry = "" },
+                new AutoCorrectEntry { Name = "ngt", Symbol = "≯", ExistingEntry = "" },
+                new AutoCorrectEntry { Name = "notgt", Symbol = "≯", ExistingEntry = "" },
                 new AutoCorrectEntry { Name = "nleq", Symbol = "≰", ExistingEntry = "/\\le" },
                 new AutoCorrectEntry { Name = "notle", Symbol = "≰", ExistingEntry = "/\\le" },
                 new AutoCorrectEntry { Name = "nge", Symbol = "≱", ExistingEntry = "/\\ge" },
@@ -372,16 +389,16 @@ namespace MathAutoCorrectInstaller
                 new AutoCorrectEntry { Name = "implication", Symbol = "→", ExistingEntry = "\\rightarrow" },
                 new AutoCorrectEntry { Name = "implies", Symbol = "→", ExistingEntry = "\\rightarrow" },
                 new AutoCorrectEntry { Name = "biconditional", Symbol = "↔", ExistingEntry = "\\leftrightarrow" },
-                new AutoCorrectEntry { Name = "Implication", Symbol = "⇒", ExistingEntry = "\\rightarrow" },
-                new AutoCorrectEntry { Name = "Implies", Symbol = "⇒", ExistingEntry = "\\rightarrow" },
-                new AutoCorrectEntry { Name = "Biconditional", Symbol = "⇔", ExistingEntry = "\\leftrightarrow" },
+                new AutoCorrectEntry { Name = "Implication", Symbol = "⇒", ExistingEntry = "\\Rightarrow" },
+                new AutoCorrectEntry { Name = "Implies", Symbol = "⇒", ExistingEntry = "\\Rightarrow" },
+                new AutoCorrectEntry { Name = "Biconditional", Symbol = "⇔", ExistingEntry = "\\Leftrightarrow" },
                 new AutoCorrectEntry { Name = "forces", Symbol = "⊩", ExistingEntry = "" },
                 new AutoCorrectEntry { Name = "entailment", Symbol = "⊨", ExistingEntry = "\\models" },
                 new AutoCorrectEntry { Name = "true", Symbol = "⊨", ExistingEntry = "\\models" },
                 new AutoCorrectEntry { Name = "foreach", Symbol = "∀", ExistingEntry = "\\forall" },
                 new AutoCorrectEntry { Name = "forsome", Symbol = "∃", ExistingEntry = "\\exists" },
 
-                // Statistics and Probability
+                // Statistics and Probablility
                 new AutoCorrectEntry { Name = "stddev", Symbol = "σ", ExistingEntry = "\\sigma" },
                 new AutoCorrectEntry { Name = "mean", Symbol = "μ", ExistingEntry = "\\mu" },
                 new AutoCorrectEntry { Name = "corr", Symbol = "ρ", ExistingEntry = "\\rho" },
@@ -393,7 +410,11 @@ namespace MathAutoCorrectInstaller
                 new AutoCorrectEntry { Name = "hadamard", Symbol = "⊙", ExistingEntry = "\\odot" },
                 new AutoCorrectEntry { Name = "adjoint", Symbol = "†", ExistingEntry = "" },
                 new AutoCorrectEntry { Name = "identity", Symbol = "𝐈", ExistingEntry = "" },
-                new AutoCorrectEntry { Name = "directsum", Symbol = "⊕", ExistingEntry = "\\oplus" }
+                new AutoCorrectEntry { Name = "directsum", Symbol = "⊕", ExistingEntry = "\\oplus" },
+
+
+
+
             };
 
             return entries;
